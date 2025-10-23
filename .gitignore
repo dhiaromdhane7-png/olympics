@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+venv/
+local_gui.py
+*.sqlite3
+*.db   # if you don't want to include users.db in git; see note below

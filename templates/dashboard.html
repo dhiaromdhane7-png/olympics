@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Dashboard — {{ username }}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-1:#041022;
+      --bg-2:#05283e;
+      --panel:#0f2330;
+      --muted:rgba(255,255,255,0.78);
+      --accent-1:#ffd700;
+      --accent-2:#00ffcc;
+      --glass:rgba(255,255,255,0.03);
+      --card-shadow: 0 14px 40px rgba(2,8,23,0.55);
+      --radius:16px;
+      --glass-border: rgba(255,255,255,0.04);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:
+        radial-gradient(800px 420px at 8% 10%, rgba(255,215,0,0.03), transparent 8%),
+        radial-gradient(700px 360px at 92% 92%, rgba(0,255,204,0.03), transparent 6%),
+        linear-gradient(135deg,var(--bg-1),var(--bg-2));
+      color:#e9f6f6;
+      -webkit-font-smoothing:antialiased;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:28px;
+      gap:20px;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:1200px;
+      display:grid;
+      grid-template-columns: 1fr 380px;
+      gap:24px;
+      align-items:start;
+    }
+
+    .topbar{
+      grid-column:1 / -1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px;
+      border:1px solid var(--glass-border);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(6px) saturate(120%);
+    }
+
+    .brand {
+      display:flex;align-items:center;gap:14px;
+    }
+    .logo{
+      width:56px;height:56px;border-radius:12px;display:grid;place-items:center;
+      background:linear-gradient(180deg,#062833,#0a2f3b);font-weight:800;color:var(--muted);
+      border:1px solid rgba(255,255,255,0.03);font-family:'Poppins',sans-serif;font-size:1rem;
+      box-shadow: 0 8px 28px rgba(2,8,23,0.45);
+    }
+    .title{
+      font-family:'Poppins',sans-serif;font-weight:700;color:var(--accent-1);font-size:1.05rem;
+      letter-spacing:0.2px;
+    }
+    .user-info{ color:var(--muted); font-weight:600 }
+
+    /* Main content */
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      border-radius:var(--radius);
+      padding:18px;
+      border:1px solid var(--glass-border);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(6px);
+    }
+
+    .report-panel{
+      min-height:420px;
+    }
+
+    .no-access{
+      text-align:center;padding:46px;border-radius:12px;background:rgba(255,255,255,0.02);
+      color:#ffb3b3;font-weight:600;
+    }
+    #homeBtn {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--accent-2);
+  color: #042022;
+  text-decoration: none;
+  font-weight: 800;
+  border: none;
+  box-shadow: 0 10px 30px rgba(1,40,35,0.14);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#homeBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 34px rgba(1,40,35,0.18);
+}
+    .action-link{
+      display:inline-block;margin-top:14px;padding:10px 16px;border-radius:12px;background:var(--accent-2);color:#042022;
+      text-decoration:none;font-weight:800;border:none;box-shadow: 0 10px 30px rgba(1,40,35,0.14);
+    }
+
+    iframe.report{
+      width:100%;height:640px;border:none;border-radius:12px;margin-top:6px;background:#031a25;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+
+    /* Right column: Quick stats & prediction */
+    .side{
+      display:flex;flex-direction:column;gap:18px;
+    }
+
+    .status {
+      padding:12px;border-radius:12px;font-weight:700;
+      display:flex;align-items:center;justify-content:space-between;gap:8px;
+      border:1px solid rgba(255,255,255,0.03);
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+    }
+    .status.loaded{ border-color: rgba(144,238,144,0.18); color:#bfffdc; background: linear-gradient(180deg, rgba(0,100,70,0.05), rgba(0,0,0,0.02)); }
+    .status.error{ border-color: rgba(255,107,107,0.12); color:#ffb3b3; }
+
+    .prediction {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      padding:14px;border-radius:12px;border:1px solid var(--glass-border);
+    }
+    .prediction h3{ margin:0 0 8px 0;color:var(--accent-1);font-family:'Poppins',sans-serif;font-size:1rem }
+    .prediction p{ color:var(--muted); font-size:0.95rem;margin:0 0 10px 0 }
+
+    .form-row { display:flex;gap:10px;align-items:center }
+    .input{
+      flex:1;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);
+      background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+      color:var(--muted);font-weight:600;outline:none;font-size:0.95rem;
+    }
+    .input:focus{ box-shadow: 0 10px 30px rgba(2,8,23,0.45); transform: translateY(-2px); border-color: rgba(0,255,204,0.16) }
+
+    .btn-predict{
+      padding:10px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent-2),#00b894);
+      color:#041722;font-weight:800;cursor:pointer;
+      box-shadow:0 12px 30px rgba(1,40,35,0.12);
+    }
+    .btn-predict[disabled]{ opacity:0.45; cursor:not-allowed; filter:grayscale(0.3) }
+
+    .loading {
+      display:none;padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);color:var(--muted);text-align:center;font-weight:700;
+    }
+
+    .results{ margin-top:10px; overflow:auto; max-height:420px; border-radius:10px; }
+    .prediction-table{
+      width:100%;border-collapse:collapse;margin-top:8px;font-size:0.95rem;
+      min-width:520px;
+    }
+    .prediction-table th, .prediction-table td{
+      padding:10px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03);
+    }
+    .prediction-table th{ color:var(--accent-1); background: rgba(255,255,255,0.01); font-weight:700; position:sticky; top:0; z-index:2 }
+    .medal-count { font-weight:800; text-align:right }
+    .gold{ color: #ffd700 }
+    .silver{ color: #c0c0c0 }
+    .bronze{ color: #cd7f32 }
+
+    .footnote{ margin-top:12px;font-size:0.82rem;color:var(--muted); text-align:center }
+
+    /* responsive */
+    @media (max-width:980px){
+      .wrap{ grid-template-columns: 1fr; }
+      iframe.report { height:520px; }
+      .side{ order:2 }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap" role="main" aria-labelledby="dashboard-title">
+    <header class="topbar" role="banner">
+      <div class="brand" aria-hidden="false">
+        <div class="logo" aria-hidden="true">PB</div>
+        <div>
+          <div class="title" id="dashboard-title">Power BI Dashboard</div>
+          <div style="color:var(--muted);font-size:0.9rem;margin-top:4px">Insights & forecasts tailored for <strong style="color:var(--accent-1)">{{ username }}</strong></div>
+        </div>
+      </div>
+      <div class="user-info" aria-label="Signed in user">Signed in as: <strong>{{ username }}</strong></div>
+    </header>
+
+    <!-- Main report area -->
+    <section class="panel report-panel" aria-label="Report area">
+      {% if embed_url %}
+        <iframe class="report" title="PowerBI-{{ username }}" src="{{ embed_url }}" allowfullscreen loading="lazy" referrerpolicy="no-referrer"></iframe>
+      {% else %}
+        <div class="no-access" role="alert">
+          <div style="font-size:28px">🚫</div>
+          <div style="margin-top:12px">You don't have access to a dashboard right now.</div>
+          <div><a class="action-link" href="/">Return to home</a></div>
+        </div>
+      {% endif %}
+    </section>
+
+    <!-- Side column: model status & prediction -->
+    <aside class="side" aria-label="Sidebar with predictions and status">
+      <div class="status {% if models_loaded %}loaded{% else %}error{% endif %}" role="status" aria-live="polite">
+        <div>
+          {% if models_loaded %}
+            ✅ Models ready
+            <div style="font-size:12px;color:var(--muted);font-weight:600">All prediction models loaded</div>
+          {% else %}
+            ❌ Models unavailable
+            <div style="font-size:12px;color:var(--muted);font-weight:600">Predictions currently disabled</div>
+          {% endif %}
+        </div>
+        <div style="font-size:0.85rem;color:var(--muted)">{{ 'Online' if models_loaded else 'Offline' }}</div>
+      </div>
+
+      <div class="prediction panel">
+        <h3>Olympic Medal Prediction</h3>
+        <p>Predict medal counts for a future Olympics year. Top 20 results are returned.</p>
+
+        <form id="prediction-form" class="form-row" novalidate>
+          <input id="prediction-year" class="input" type="number" min="2024" max="2100" value="2028" aria-label="Prediction year" required>
+          <button id="predict-btn" class="btn-predict" type="submit" {% if not models_loaded %}disabled{% endif %}>Predict</button>
+        </form>
+
+        <div id="loading" class="loading" aria-hidden="true">🔮 Calculating predictions…</div>
+
+        <div id="prediction-results" class="results" aria-live="polite" aria-atomic="true"></div>
+
+        <div class="footnote">Predictions are probabilistic estimates. Use responsibly.</div>
+      </div>
+
+      <div class="panel" style="padding:12px;font-size:0.95rem;color:var(--muted);text-align:center">
+        <div style="font-weight:700;margin-bottom:6px">Quick Actions</div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
+          <a class="action-link" href="/compact/{{ username }}" style="background:linear-gradient(90deg,#ffd700,#ffb142)">Compact View</a>
+          <a class="action-link" href="/profile/{{ username }}" style="background:linear-gradient(90deg,#00ffcc,#00b894)">Profile</a>
+           <button class="btn secondary" id="homeBtn" type="button">Return Home</button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    (function(){
+      const form = document.getElementById('prediction-form');
+      const yearInput = document.getElementById('prediction-year');
+      const loadingEl = document.getElementById('loading');
+      const resultsEl = document.getElementById('prediction-results');
+      const predictBtn = document.getElementById('predict-btn');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const year = parseInt(yearInput.value, 10);
+
+        if (!year || year < 2024 || year > 2100) {
+          showError('Please enter a valid year between 2024 and 2100.');
+          return;
+        }
+
+        // UI: show loading
+        loadingEl.style.display = 'block';
+        loadingEl.setAttribute('aria-hidden','false');
+        resultsEl.innerHTML = '';
+        predictBtn.disabled = true;
+
+        try {
+          const res = await fetch('/predict-medals', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ year })
+          });
+
+          const data = await res.json();
+          loadingEl.style.display = 'none';
+          loadingEl.setAttribute('aria-hidden','true');
+          predictBtn.disabled = false;
+
+          if (!res.ok || data.error) {
+            showError(data.error || 'Prediction failed. Please try again later.');
+            return;
+          }
+
+          renderResults(data.predictions || [], year);
+        } catch (err) {
+          loadingEl.style.display = 'none';
+          loadingEl.setAttribute('aria-hidden','true');
+          predictBtn.disabled = false;
+          showError(err.message || 'Network error. Please try again.');
+        }
+      });
+
+      function showError(msg) {
+        resultsEl.innerHTML = `<div style="padding:12px;border-radius:10px;background:rgba(255,0,0,0.06);color:#ffb3b3;font-weight:700">${escapeHtml(msg)}</div>`;
+      }
+
+      function renderResults(predictions, year) {
+        if (!predictions || predictions.length === 0) {
+          resultsEl.innerHTML = `<div style="padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);color:var(--muted);font-weight:700">No prediction data available for ${escapeHtml(year)}</div>`;
+          return;
+        }
+
+        let html = `
+          <div style="padding:10px 12px;color:var(--muted);font-weight:700">Predicted Medal Counts — Top ${predictions.length} for ${escapeHtml(year)}</div>
+          <div style="overflow:auto">
+            <table class="prediction-table" role="table" aria-label="Prediction results">
+              <thead>
+                <tr>
+                  <th style="width:64px">Rank</th>
+                  <th>Country</th>
+                  <th style="text-align:right">🥇</th>
+                  <th style="text-align:right">🥈</th>
+                  <th style="text-align:right">🥉</th>
+                  <th style="text-align:right">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        predictions.forEach((p, i) => {
+          const rank = i + 1;
+          const medalEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+          html += `
+            <tr>
+              <td style="font-weight:800">${escapeHtml(medalEmoji)}</td>
+              <td>${escapeHtml(p.country)}</td>
+              <td class="medal-count gold">${escapeHtml(String(p.gold || 0))}</td>
+              <td class="medal-count silver">${escapeHtml(String(p.silver || 0))}</td>
+              <td class="medal-count bronze">${escapeHtml(String(p.bronze || 0))}</td>
+              <td class="medal-count">${escapeHtml(String(p.total || (p.gold+p.silver+p.bronze) || 0))}</td>
+            </tr>
+          `;
+        });
+
+        html += `</tbody></table></div>`;
+        resultsEl.innerHTML = html;
+      }
+
+      // Basic escaping to prevent injection if server returns unexpected data
+      function escapeHtml(s){
+        if (s === null || s === undefined) return '';
+        return String(s).replace(/[&<>"'`=\/]/g, function(c){
+          return {
+            '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#x60;','=':'&#x3D;'
+          }[c];
+        });
+      }
+    })();
+    const homeBtn = document.getElementById('homeBtn');
+homeBtn.addEventListener('click', () => {
+  // Redirect to Flask route
+  window.location.href = "/olympics/{{ username }}"; 
+});
+
+  </script>
+</body>
+</html>
